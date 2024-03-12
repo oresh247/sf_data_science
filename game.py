@@ -1,22 +1,47 @@
 """Игра угадай число"""
 
 import numpy as np
+min_number = 1
+max_number = 101
 
-number = np.random.randint(1, 101) # загадываем число
+number = np.random.randint(min_number, max_number)  # загадываем число
 
-# количество попыток
-count = 0
+def score_game(number) -> int:
+    # счетчик количество попыток
+    count = 0
 
-while True:
-    count+=1
-    predict_number = int(input("Угадай число от 1 до 100: "))
-    
-    if predict_number > number:
-        print("Число должно быть меньше!")
+    # инициализация временных переменных а основе заданных пределов
+    temp = max_number // 2
+    predict_number = max_number // 2
 
-    elif predict_number < number:
-        print("Число должно быть больше!")
-    
-    else:
-        print(f"Вы угадали число! Это число = {number}, за {count} попыток")
-        break #конец игры выход из цикла
+    while True:
+        last_predict_number = temp
+        count += 1
+
+        if predict_number > number: # угадываемое число меньше
+            if count == 1:
+                last_predict_number = min_number
+            temp = predict_number
+            # берем половину между ранее взятым числом и текущим предпологаемым числом
+            difference = abs(predict_number - last_predict_number) // 2
+            if difference == 0: difference = 1 # корректировка, если разница равна 0
+            predict_number = predict_number - difference
+
+        elif predict_number < number: # угадываемое число больше
+            if count == 1:
+                last_predict_number = max_number
+            temp = predict_number
+            # добавляем к текущему предпологаемому числу половину
+            # между ранее взятым числом и текущим предпологаемым числом
+            difference = abs(predict_number - last_predict_number) // 2
+            if difference == 0: difference = 1 # корректировка, если разница равна 0
+            predict_number = predict_number + difference
+
+        else:
+            print(f"Вы угадали число! Это число = {number}, за {count} попыток")
+            break  # конец игры выход из цикла
+    return count
+
+
+# RUN
+score_game(number)
